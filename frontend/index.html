@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <title>ARIA — Web AR AI Avatar</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- AR Canvas (Three.js renders here) -->
+  <canvas id="ar-canvas"></canvas>
+
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loader-inner">
+      <div class="loader-ring"></div>
+      <div class="loader-ring loader-ring--delay"></div>
+      <span class="loader-label">ARIA</span>
+    </div>
+    <p class="loader-status" id="loader-status">Initializing systems…</p>
+  </div>
+
+  <!-- HUD Top Bar -->
+  <div id="hud-top">
+    <div class="hud-logo">ARIA <span class="hud-version">v1.0</span></div>
+    <div class="hud-status">
+      <span class="status-dot" id="status-dot"></span>
+      <span id="status-label">Offline</span>
+    </div>
+    <button id="btn-ar" class="hud-btn" title="Toggle AR Camera">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Avatar Container (3D view) -->
+  <div id="avatar-scene">
+    <!-- Three.js canvas fills this -->
+    <div id="avatar-controls">
+      <button class="ctrl-btn" id="btn-wave" title="Wave">👋</button>
+      <button class="ctrl-btn" id="btn-smile" title="Smile">😊</button>
+      <button class="ctrl-btn" id="btn-think" title="Thinking">🤔</button>
+      <button class="ctrl-btn" id="btn-jump"     title="Jump">🦘</button>
+      <button class="ctrl-btn" id="btn-relax"    title="Relax">😌</button>
+      <button class="ctrl-btn" id="btn-clapping" title="Clapping">👏</button>
+      <button class="ctrl-btn" id="btn-reset" title="Reset">↺</button>
+    </div>
+    <div id="emotion-badge"></div>
+  </div>
+
+  <!-- Chat Panel -->
+  <div id="chat-panel">
+    <div id="chat-header">
+      <div class="chat-title">Chat with ARIA</div>
+      <button id="btn-clear-chat" class="icon-btn" title="Clear chat">✕</button>
+    </div>
+    <div id="chat-messages"></div>
+    <div id="chat-input-row">
+      <button id="btn-mic" class="mic-btn" title="Voice input">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+      </button>
+      <input type="text" id="chat-input" placeholder="Ask ARIA anything…" autocomplete="off" />
+      <button id="btn-send" class="send-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Memory Panel (slide-in) -->
+  <div id="memory-panel" class="panel-hidden">
+    <div class="panel-header">
+      <span>Memory</span>
+      <button id="btn-close-memory" class="icon-btn">✕</button>
+    </div>
+    <div id="memory-list"></div>
+    <button id="btn-clear-memory" class="danger-btn">Clear All Memory</button>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav id="bottom-nav">
+    <button class="nav-btn active" data-panel="chat">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      <span>Chat</span>
+    </button>
+    <button class="nav-btn" data-panel="avatar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+      </svg>
+      <span>Avatar</span>
+    </button>
+    <button class="nav-btn" data-panel="memory">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+      </svg>
+      <span>Memory</span>
+    </button>
+  </nav>
+
+  <!-- Notification Toast -->
+  <div id="toast"></div>
+
+  <!-- Config Modal (API Key setup) -->
+  <div id="config-modal" class="modal-hidden">
+    <div class="modal-box">
+      <h2>Configure ARIA</h2>
+      <p>Enter your Gemini API key to enable AI responses.</p>
+      <input type="password" id="api-key-input" placeholder="AIza…" />
+      <p class="modal-hint">
+        Get a free key at <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a>
+      </p>
+      <div class="modal-actions">
+        <button id="btn-save-key" class="primary-btn">Save & Connect</button>
+        <button id="btn-skip-key" class="ghost-btn">Skip (demo mode)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts (ES Modules) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.177.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.177.0/examples/jsm/",
+      "@pixiv/three-vrm": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3/lib/three-vrm.module.min.js",
+      "@pixiv/three-vrm-animation": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm-animation@3/lib/three-vrm-animation.module.min.js"
+    }
+  }
+  </script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

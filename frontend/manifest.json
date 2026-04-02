@@ -1,0 +1,8 @@
+{
+  "name": "ARIA — Web AR AI Avatar",
+  "short_name": "ARIA",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#6366f1",
+  "background_color": "#08080f"
+}

@@ -38,15 +38,19 @@ ar-avatar/
 
 ### Step 2 — Start the server
 ```bash
-cd ar-avatar
+cd frontend
 node serve.js
+
+for backend
+cd backend
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 Open: **https://localhost:3000**  
 *(Accept the self-signed certificate warning)*
 
-### Step 3 — Get a Gemini API Key (free)
+### Step 3 — Get a Gemini/Groq API Key (free)
 1. Go to https://aistudio.google.com
-2. Sign in with Google
+2. In my case I use Groq as Gemini has compatibility issue
 3. Click **Get API Key** → **Create API key**
 4. Copy the key (starts with `AIza…`)
 5. Paste it into the ARIA config modal when the app opens
@@ -61,7 +65,7 @@ Without a VRM, ARIA uses a built-in placeholder avatar.
 
 ---
 
-## 📱 Mobile Testing
+## Mobile Testing
 1. Find your laptop's local IP (e.g. `192.168.1.5`)
 2. Open `https://192.168.1.5:3000` on your phone
 3. Accept the cert warning
@@ -124,21 +128,6 @@ In `aiAgent.js`, edit the `ARIA_PERSONA` constant.
 
 ### Add more emotion keywords
 In `emotionEngine.js`, extend the `EMOTION_MAP` object.
-
----
-
-##  Deploy to GitHub Pages
-```bash
-# 1. Create a GitHub repo
-# 2. Push your code
-git init && git add . && git commit -m "ARIA v1"
-git remote add origin https://github.com/YOUR_NAME/aria-avatar
-git push -u origin main
-
-# 3. Enable GitHub Pages (Settings → Pages → main branch)
-# 4. Your site: https://YOUR_NAME.github.io/aria-avatar
-```
-Note: GitHub Pages serves HTTPS automatically ✅
 
 ---
 
